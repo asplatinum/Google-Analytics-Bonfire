@@ -27,15 +27,12 @@ function google_api_php_client_autoload($className) {
   if($classPath[0] == 'Google') {
     unset($classPath[0]);
   }
-  //$filePath = '../application/third_party/' . implode('/', $classPath) . '.php';
   $filePath = __DIR__ . '/' . implode('/', $classPath) . '.php';
-  //print_r($filePath);
   if (file_exists($filePath)) {
 
     require_once($filePath);
    
   }
-  //var_dump(__DIR__);
 }
 
 spl_autoload_register('google_api_php_client_autoload');
