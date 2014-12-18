@@ -2,7 +2,8 @@
 
 $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
-	if ($has_records) :
+
+	if ($has_records || $GA_data['GA_data'] != null) :
 		$GA_users = $GA_data['GA_users'];
 		$GA_new_visitor = $GA_users->rows[0][1];
 		$GA_returning_visitor = $GA_users->rows[1][1];
@@ -11,9 +12,10 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 ?>
       <div class="row">
         <div class="span3" id="pie_chart_div"></div>
-        <div class="span8" id="line_chart_div"></div>
+        <div class="span3" id="line_chart_div"></div>
       </div>
       <div class="row">
+      <div class="span6">
       <table class="table table-striped">
             <thead>
               <tr>
@@ -33,6 +35,32 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
               ?>
             </tbody>
             </table>
+            </div>
+      <div class="span6">
+      <table class="table table-striped">
+        <thead>
+              <tr>
+                <th>Source</th>
+                <th>Referral Path</th>
+                <th>Sessions</th>
+                <th>URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+            foreach ($GA_data['GA_referrers']['rows'] as $browser) {
+              echo '<tr>';
+              echo '<td>' . $browser[0] . '</td>';
+              echo '<td>' . $browser[1] .'</td>';
+              echo '<td>' . $browser[2] .'</td>';
+              echo ($browser[1] != '(not set)') ? '<td><a href="http://'.$browser[0].''.$browser[1].'">'.$browser[0].'</a></td>' : '<td></td>';
+              echo '</tr>';
+            }
+
+              ?>
+            </tbody>
+            </table>
+      </div>
       </div>
 
 <!--Load the AJAX API-->
@@ -90,7 +118,7 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
           pointSize: 5,
           width: '1250',
           height: '350',
-          legend: 'bottom'
+          legend: 'none'
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('line_chart_div'));
@@ -101,5 +129,5 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 <?php
 	else:
 ?>
-No data to display.
+No data to display. Or incorrect database settings.
 <?php endif; ?>
