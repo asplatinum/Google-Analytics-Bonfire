@@ -124,7 +124,7 @@ class seo extends Admin_Controller
 
 	private function GA_browsers($profileID, $startDate, $endDate) {
 		$metrics = "ga:sessions";
-		$optParams = array("dimensions" => "ga:browser");
+		$optParams = array("dimensions" => "ga:browser", "sort" => "-ga:sessions");
 		$data = $this->analytics->data_ga->get($this->GA_config()->GA_profileId, $startDate, $endDate, $metrics, $optParams);
 
 		return $data;
@@ -140,7 +140,7 @@ class seo extends Admin_Controller
 
 	private function GA_visitors_day($profileID, $startDate, $endDate) {
 		$metrics = "ga:pageviews, ga:sessions";
-		$optParams = array("dimensions" => "ga:day", "sort" => "ga:day");
+		$optParams = array("dimensions" => "ga:date", "sort" => "ga:date");
 		$data = $this->analytics->data_ga->get($this->GA_config()->GA_profileId, $startDate, $endDate, $metrics, $optParams);
 
 		return $data;

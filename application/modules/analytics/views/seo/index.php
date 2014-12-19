@@ -10,12 +10,12 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
 		$GA_visitor_total = $GA_new_visitor + $GA_returning_visitor;
 ?>
-      <div class="row">
-        <div class="span3" id="pie_chart_div"></div>
-        <div class="span3" id="line_chart_div"></div>
+      <div class="row-fluid">
+        <div class="span2" id="pie_chart_div"></div>
+        <div class="span4" id="line_chart_div"></div>
       </div>
-      <div class="row">
-      <div class="span6">
+      <div class="row-fluid">
+      <div class="span3">
       <table class="table table-striped">
             <thead>
               <tr>
@@ -35,7 +35,8 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
               ?>
             </tbody>
             </table>
-            </div>
+      </div>
+      <div class="span2"></div>
       <div class="span6">
       <table class="table table-striped">
         <thead>
@@ -91,8 +92,8 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
         // Set chart options
         var options = {
         				'legend':'bottom',
-                       'width':350,
-                       'height':400};
+                       'width':300,
+                       'height':350};
 
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
@@ -101,11 +102,11 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
       function draw_Page_Session_lineChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Day', 'Pageviews', 'Sessions'],
+          ['Date', 'Pageviews', 'Sessions'],
           <?php
 
             foreach ($GA_data['GA_visitors_day']['rows'] as $visitor_session) {
-              echo "['".$visitor_session[0]."', ".$visitor_session[1].", ".$visitor_session[2]."],\r\n";
+              echo "['".date("d-m-y", strtotime($visitor_session[0]))."', ".$visitor_session[1].", ".$visitor_session[2]."],\r\n";
             }
 
           ?>
@@ -113,12 +114,15 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
         var options = {
           title: 'Metrics: Sessions/Pageviews',
-          hAxis: {title: 'Day',  titleTextStyle: {color: '#333'}},
           vAxis: {minValue: 0},
           pointSize: 5,
-          width: '1250',
+          width: '1350',
           height: '350',
-          legend: 'none'
+          legend: 'none',
+          series: {
+            0: { lineDashStyle: [10, 2] },
+            1: { lineDashStyle: [10, 2] },
+          }
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('line_chart_div'));
