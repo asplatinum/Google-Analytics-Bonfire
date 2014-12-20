@@ -9,9 +9,10 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 		$GA_returning_visitor = $GA_users->rows[1][1];
 
 		$GA_visitor_total = $GA_new_visitor + $GA_returning_visitor;
+
 ?>
       <div class="row-fluid">
-        <div class="span2" id="pie_chart_div"></div>
+        <div class="span3" id="pie_chart_div"></div>
         <div class="span4" id="line_chart_div"></div>
       </div>
       <div class="row-fluid">
@@ -92,8 +93,10 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
         // Set chart options
         var options = {
         				'legend':'bottom',
-                       'width':300,
-                       'height':350};
+                'width':300,
+                'height':350,
+                'pieHole': 0.4
+                };
 
         // Instantiate and draw our chart, passing in some options.
         var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
@@ -101,12 +104,16 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
       }
 
       function draw_Page_Session_lineChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Date', 'Pageviews', 'Sessions'],
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Date');
+        data.addColumn('number', 'Pageviews');
+        data.addColumn('number', 'Sessions');
+        data.addRows([
           <?php
-
+          $i=0;
             foreach ($GA_data['GA_visitors_day']['rows'] as $visitor_session) {
-              echo "['".date("d-m-y", strtotime($visitor_session[0]))."', ".$visitor_session[1].", ".$visitor_session[2]."],\r\n";
+              $i++;
+              echo "                [new Date(".date("Y, m-1, d", strtotime($visitor_session[0]))."), ".$visitor_session[1].", ".$visitor_session[2]."]" . ($i != count($GA_data['GA_visitors_day']['rows']) ? ',' : '') . "\r\n"; // Remove comma from last value (IE issue).
             }
 
           ?>
@@ -116,9 +123,10 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
           title: 'Metrics: Sessions/Pageviews',
           vAxis: {minValue: 0},
           pointSize: 5,
-          width: '1350',
+          width: '1250',
           height: '350',
           legend: 'none',
+          curveType: 'function',
           series: {
             0: { lineDashStyle: [10, 2] },
             1: { lineDashStyle: [10, 2] },
