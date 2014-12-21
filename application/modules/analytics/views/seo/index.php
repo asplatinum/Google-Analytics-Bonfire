@@ -3,7 +3,7 @@
 $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
 
-	if ($has_records || $GA_data['GA_data'] != null) :
+	if ($has_records && !isset($GA_data['db_settings'])) :
 		$GA_users = $GA_data['GA_users'];
 		$GA_new_visitor = $GA_users->rows[0][1];
 		$GA_returning_visitor = $GA_users->rows[1][1];
@@ -11,6 +11,7 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 		$GA_visitor_total = $GA_new_visitor + $GA_returning_visitor;
 
 ?>
+<div id="ajax-content">
       <div class="row-fluid">
         <div class="span3" id="pie_chart_div"></div>
         <div class="span4" id="line_chart_div"></div>
@@ -26,13 +27,12 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
             </thead>
             <tbody>
               <?php
-            foreach ($GA_data['GA_browsers']['rows'] as $browser) {
-              echo '<tr>';
-              echo '<td>' . $browser[0] . '</td>';
-              echo '<td>' . $browser[1] .'</td>';
-              echo '</tr>';
-            }
-
+                  foreach ($GA_data['GA_browsers']['rows'] as $browser) {
+                    echo '<tr>';
+                    echo '<td>' . $browser[0] . '</td>';
+                    echo '<td>' . $browser[1] .'</td>';
+                    echo '</tr>';
+                  }
               ?>
             </tbody>
             </table>
@@ -64,6 +64,7 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
             </table>
       </div>
       </div>
+</div>
 
 <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -113,7 +114,7 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
           $i=0;
             foreach ($GA_data['GA_visitors_day']['rows'] as $visitor_session) {
               $i++;
-              echo "                [new Date(".date("Y, m-1, d", strtotime($visitor_session[0]))."), ".$visitor_session[1].", ".$visitor_session[2]."]" . ($i != count($GA_data['GA_visitors_day']['rows']) ? ',' : '') . "\r\n"; // Remove comma from last value (IE issue).
+              e("                [new Date(".date("Y, m-1, d", strtotime($visitor_session[0]))."), ".$visitor_session[1].", ".$visitor_session[2]."]" . ($i != count($GA_data['GA_visitors_day']['rows']) ? ',' : '') . "\r\n"); // Remove comma from last value (IE issue) IIRC.
             }
 
           ?>
@@ -123,7 +124,7 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
           title: 'Metrics: Sessions/Pageviews',
           vAxis: {minValue: 0},
           pointSize: 5,
-          width: '1250',
+          width: '1200',
           height: '350',
           legend: 'none',
           curveType: 'function',
@@ -139,7 +140,9 @@ $has_records	= isset($GA_data) && is_array($GA_data) && count($GA_data);
 
     </script>
 <?php
+  elseif (isset($GA_data['db_settings'])):
+    e('Incorrect config settings in database.');
 	else:
 ?>
-No data to display. Or incorrect database settings.
+No data to display.
 <?php endif; ?>
